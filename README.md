@@ -24,15 +24,23 @@ const r: Result = summarize(plan)
 // r = { added, changed, destroyed, drifted, summary: [{ address, actions }] }
 ```
 
-### Semantics (must match the backend exactly)
+### Semantics (must match `drift_summary.py` exactly)
 
 - `added` / `changed` / `destroyed` = resources whose actions **contain**
   create / update / delete (a replacement `["delete","create"]` counts as
-  **both** added and destroyed);
-- `summary` = every change **not exactly** `["no-op"]`, as `{address, actions}`;
-- `drifted` = any change other than `no-op`/`read` (the plan-JSON equivalent of
-  the dispatched runner's `plan -detailed-exitcode == 2`; a pure read-only
-  refresh is **not** drift).
+  **both** added and destroyed; counts are **not** mutually exclusive — use
+  `summary.length` for a distinct resource count);
+- `summary` = every change whose actions are **not exactly** `["no-op"]` or
+  `["read"]`, as `{address, actions, attrs?}`;
+- `attrs` (in-place updates/replaces only) = the top-level keys whose value
+  differs, each `{name, before, after}` with values run through `fmt()`
+  (300 code-point truncation, U+2026 marker) and masked to the literal
+  `"(sensitive)"` when `before_sensitive`/`after_sensitive` marks them
+  (terraform `-json` does **not** pre-mask — masking happens here, before
+  `fmt()`, so secrets never reach the formatter);
+- `drifted` = `(added + changed + destroyed) > 0` (a pure replace has
+  `changed == 0` but `drifted == true`; do not infer "no drift" from
+  `changed == 0`).
 
 ## Consuming it (no registry required)
 
