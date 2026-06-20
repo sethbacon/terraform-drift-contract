@@ -1,3 +1,25 @@
+export interface AttrChange {
+    name: string;
+    /** fmt(value) | "(sensitive)" | null */
+    before: string | null;
+    after: string | null;
+}
+export interface SummaryEntry {
+    address: string;
+    actions: string[];
+    /** Present only on in-place updates/replaces with at least one changed key. */
+    attrs?: AttrChange[];
+}
+export interface ResourceChange {
+    address?: string;
+    change?: {
+        actions?: string[];
+        before?: unknown;
+        after?: unknown;
+        before_sensitive?: unknown;
+        after_sensitive?: unknown;
+    };
+}
 /** The subset of a `terraform show -json` / `tofu show -json` document we read. */
 export interface Plan {
     resource_changes?: ResourceChange[];
@@ -7,16 +29,6 @@ export interface Plan {
         };
     };
 }
-export interface ResourceChange {
-    address: string;
-    change: {
-        actions: string[];
-    };
-}
-export interface SummaryEntry {
-    address: string;
-    actions: string[];
-}
 export interface Result {
     added: number;
     changed: number;
@@ -24,11 +36,14 @@ export interface Result {
     drifted: boolean;
     summary: SummaryEntry[];
 }
-/** Classifies each resource change exactly as the backend's `Summarize` does. */
+/** Verbatim port of drift_summary.py `fmt`: strings pass through raw, everything
+ *  else is compact sorted JSON; truncate past 300 code points with U+2026. */
+export declare function fmt(v: unknown): string | null;
+/** Verbatim port of drift_summary.py `is_sens`: before_sensitive/after_sensitive
+ *  mirror the value shape; True (or a non-empty nested dict/list) → mask. */
+export declare function isSens(sens: unknown, k: string): boolean;
 export declare function summarize(plan: Plan | null | undefined): Result;
-/**
- * Extracts the module-provenance subdocument the backend expects in the callback
- * `plan` field: just `configuration.root_module.module_calls`. The backend parses
- * registry-module refs from it; we only forward it (matching the template jq).
- */
+/** Forwards only `configuration.root_module.module_calls` for the optional
+ *  module-provenance field the backend accepts on dispatched runs. Not part of
+ *  drift_summary.py (which omits provenance); orthogonal to the summary. */
 export declare function moduleCallsPlan(plan: Plan | null | undefined): unknown;
