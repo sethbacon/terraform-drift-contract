@@ -1,0 +1,24 @@
+{
+  "name": "terraform-drift-contract",
+  "version": "1.0.0",
+  "description": "Shared parser for Terraform/OpenTofu plan JSON → TSM drift counts + summary. One source of truth for the GitHub Action, the Azure DevOps task, and the backend's driftingest semantics.",
+  "license": "Apache-2.0",
+  "author": "sethbacon",
+  "repository": "github:sethbacon/terraform-drift-contract",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "lint": "tsc --noEmit",
+    "prepack": "npm run build"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.0",
+    "typescript": "^5.6.0",
+    "vitest": "^2.1.0"
+  }
+}

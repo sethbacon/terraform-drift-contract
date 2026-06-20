@@ -1,0 +1,6 @@
+# Default owner for all files
+* @sethbacon
+
+# The compiled contract consumed by every drift implementation
+dist/ @sethbacon
+src/ @sethbacon

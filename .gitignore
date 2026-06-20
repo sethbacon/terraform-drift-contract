@@ -1,0 +1,6 @@
+node_modules/
+*.tsbuildinfo
+coverage/
+.DS_Store
+# dist/ is intentionally committed so git-dependency consumers
+# (npm install github:sethbacon/terraform-drift-contract#vX) need no build step.

@@ -1,0 +1,17 @@
+{
+  "resource_changes": [
+    { "address": "aws_instance.new",      "change": { "actions": ["create"] } },
+    { "address": "aws_instance.tweak",    "change": { "actions": ["update"] } },
+    { "address": "aws_instance.gone",     "change": { "actions": ["delete"] } },
+    { "address": "aws_instance.replaced", "change": { "actions": ["delete", "create"] } },
+    { "address": "aws_instance.same",     "change": { "actions": ["no-op"] } },
+    { "address": "data.aws_ami.x",        "change": { "actions": ["read"] } }
+  ],
+  "configuration": {
+    "root_module": {
+      "module_calls": {
+        "vpc": { "source": "myorg/vpc/aws", "version_constraint": "~> 5.0" }
+      }
+    }
+  }
+}

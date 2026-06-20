@@ -1,0 +1,8 @@
+terraform-drift-contract
+Copyright 2026 Terraform State Manager Contributors
+
+This product is licensed under the Apache License, Version 2.0.
+See the LICENSE file for the full license text.
+
+The golden test fixtures in __tests__/fixtures are derived from the Terraform
+State Manager backend's internal/services/driftingest test data.

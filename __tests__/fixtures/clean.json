@@ -1,0 +1,5 @@
+{
+  "resource_changes": [
+    { "address": "aws_instance.same", "change": { "actions": ["no-op"] } }
+  ]
+}

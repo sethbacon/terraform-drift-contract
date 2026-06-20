@@ -1,0 +1,31 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build-test:
+    name: Build, test, dist sync
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - run: npm test
+      - name: Rebuild and fail if dist is stale
+        # Git-dependency consumers use the committed dist/ — it must match src/.
+        run: |
+          npm run build
+          if ! git diff --exit-code -- dist; then
+            echo "::error::dist is out of date — run 'npm run build' and commit the result."
+            exit 1
+          fi
